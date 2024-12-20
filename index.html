@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+    <header>
+        <title>Find the IA</title>
+        <link href="style.css" rel="stylesheet">
+    </header>
+    <body>
+        <div id="content">
+                <div id="rules" class="panel">
+                    <h2>> Rules</h2>
+                    <p>As a dedicated detective, it's your mission to uncover the truth behind a recent crime. You'll interrogate each suspect about their activities on the night of the incident. However, time is of the essence, and you're limited to asking only 2 questions. After gathering your information, you'll need to make a <strong>crucial</strong> decision, but be cautious, this is your one and only chance to solve the case!</p>
+                    <button id="goto-settings">Understood !</button>
+                </div>
+
+                <div id="settings" class="panel">
+                    <h2>> Party settings</h2>
+                    <form id="settings-form">
+                        <label for"type">Type :</label>
+                        <input type="text" id="type" autocomplete="off" placeholder="Murder" maxlength="20" required>
+                        <label for"date">Date :</label>
+                        <input type="date" id="date" required>
+                        <label for"hour">Hour :</label>
+                        <input type="time" id="hour" name="theme" maxlength="10" required>
+                        <label for"place">Place :</label>
+                        <input type="text" id="place" autocomplete="off" placeholder="Lake, next to a tree..." maxlength="40" required>
+                        <label for"difficulty">Difficulty :</label>
+                        <select id="difficulty" name="difficulty" required>
+                            <option value="easy">Easy</option>
+                            <option value="medium">Medium</option>
+                            <option value="hard">Hard</option>
+                        </select>
+
+                        <br><button type="submit">Start the party!</button>
+                    </form>
+                </div>
+
+                <div id="game" class="panel">
+                    <div id="model-loading" hidden>LOADING MODEL</div>
+                    <canvas id="game-canvas"></canvas>
+                    <form id="chat">
+                        <input type="text" placeholder="Type here to talk to suspect 1...">
+                    </form>
+                    <button id="button-action" hidden></button>
+                </div>
+        </div>
+
+        <script type="module" src="index.js"></script>
+    </body>
+</html>
+

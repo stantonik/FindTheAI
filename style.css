@@ -1,0 +1,116 @@
+body {
+        margin: 0;
+        padding: 0;
+        background-color: black;
+        color: white;
+        font-family: Arial, Helvetica, sans-serif;
+        height: 100vh;
+}
+
+#content {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        overflow: hidden;
+}
+
+.panel {
+        position: absolute;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.5s ease-in-out;
+        padding: 20px;
+}
+
+.panel.active {
+        opacity: 1;
+        pointer-events: auto;
+}
+
+#settings-form {
+        display: flex;
+        padding: 10px;
+        flex-direction: column;
+        width: 200px;
+}
+
+#rules {
+        width: 50vw;
+}
+
+#chat {
+        display: flex;
+        margin-top: 50px;
+        width: 100%;
+        justify-content: center;
+        align-items: center;
+        padding: 0 10px;
+}
+
+#chat input {
+        width: 100%;
+        height: 100px;
+        background-color: black;
+        color: white;
+        font-size: large;
+        justify-content: start;
+        /* border: none; */
+        padding: 0 10px;
+}
+
+button {
+        background-color: transparent;
+        border: 2px solid white;
+        padding: 10px;
+        color: white;
+}
+
+button:hover {
+        border: 2px solid darkgray;
+        color: darkgray;
+}
+
+button:focus {
+        border: 2px solid darkblue;
+}
+
+input {
+        border: 2px solid white;
+}
+
+input:focus, textarea:focus {
+        outline: none;
+}
+
+#game {
+        position: relative;
+        box-sizing: border-box;
+        padding: 20px;
+}
+
+#model-loading {
+        position: absolute;
+}
+
+#game-canvas {
+        width: 100%;
+        height: auto;
+}
+
+@media (min-aspect-ratio: 10/7) {
+        #game {
+                width: 900px;
+                height: auto;
+        }
+}
+
+@media (max-aspect-ratio: 10/7) {
+        #game {
+                width: 90vw;
+                height: auto;
+        }
+}
+
