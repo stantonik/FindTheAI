@@ -34,37 +34,26 @@ class Suspect
                         this.role = "innocent";
                 }
 
-                this.friend = "";
                 this.personality = personalities[Math.floor(Math.random() * personalities.length)];
                 this.log = [];
 
-                this.inference = null;
                 this.questionCount = 0;
                 this.lastQuestion = "";
                 this.lastAnswer = "";
+
+                input.disabled = true;
+                loadingModelDiv.removeAttribute("hidden");
+                this.inference = new LlamaCpp(
+                        model,
+                        this.onModelLoaded.bind(this),
+                        this.onMessageChunk.bind(this),
+                        this.onComplete.bind(this)
+                );
         }
 
         onModelLoaded() {
                 loadingModelDiv.setAttribute("hidden", "hidden");
-
-                let prompt = `Instruct: ${context} You are ${this.role} and ${this.personality}.`;
-                if (this.log.length > 0) {
-                        prompt += `Last conversation: ${this.log.join()}`;
-                }
-                prompt = prompt.replace('\n', ' ');
-
-                prompt += `Current question: ${this.lastQuestion}\nOutput:`;
-                console.log(prompt);
-
-                this.inference.run({
-                        prompt: prompt,
-                        ctx_size: 2048,
-                        temp: 0.8,
-                        top_k: 30,
-                        no_display_prompt: true,
-                });
-
-                input.placeholder = `${questionedPerson} is thinking...`;
+                input.disabled = false;
         }
 
         onMessageChunk(text) {
@@ -74,17 +63,19 @@ class Suspect
         }
 
         onComplete() {
-                this.log.push(`Q:${this.lastQuestion}, A:${this.lastAnswer.replace('\n', ' ')}`);
+                this.log.push(`Q:${this.lastQuestion}, A:${this.lastAnswer.replace(/\n/g, ' ')}`);
 
-                if (suspectCount >= suspectNumber)
-                {
-                        input.removeAttribute("disabled");
-                        console.log("finish");
-                        input.placeholder = "Take a choice now (ex: 1)";
-                        input.type = "number";
-                        finished = true;
-                }
-                else if (currentSuspect.questionCount >= maxQuestionNumber) {
+                if (currentSuspect.questionCount >= maxQuestionNumber) {
+                        if (suspectCount >= suspectNumber)
+                        {
+                                input.removeAttribute("disabled");
+                                // console.log("finish");
+                                input.placeholder = "Take a choice now (ex: 1)";
+                                input.type = "number";
+                                finished = true;
+                                return;
+                        }
+
                         input.setAttribute("hidden", "hidden");
                         button.innerHTML = "Next suspect";
                         button.removeAttribute("hidden");
@@ -99,7 +90,6 @@ class Suspect
         }
 
         anwser(question) {
-                loadingModelDiv.removeAttribute("hidden");
                 input.disabled = true;
 
                 this.questionCount++;
@@ -108,20 +98,25 @@ class Suspect
 
                 draw(canvas);
 
-                if (this.inference) {
-                        this.onModelLoaded();
-                        return;
+                let prompt = `Instruct: ${context} You are ${this.role} and ${this.personality}.`;
+                if (this.log.length > 0) {
+                        prompt += `Last conversation: ${this.log.join()}`;
                 }
+                prompt = prompt.replace('\n', ' ');
 
-                this.inference = new LlamaCpp(
-                        model,
-                        this.onModelLoaded.bind(this),
-                        this.onMessageChunk.bind(this),
-                        this.onComplete.bind(this)
-                );
+                prompt += `Current question: ${this.lastQuestion}\nOutput:`;
+                // console.log(prompt);
+
+                this.inference.run({
+                        prompt: prompt,
+                        ctx_size: 2048,
+                        temp: 0.8,
+                        top_k: 30,
+                        no_display_prompt: true,
+                });
+
+                input.placeholder = `${questionedPerson} is thinking...`;
         }
-
-
 }
 
 function drawWrappedText(ctx, text, x, y, maxWidth) {
@@ -203,7 +198,7 @@ export function start(config) {
                 .map(([key, value]) => `${key}: ${value}`)
                 .join(", ");
 
-        context = `This is a RPG game. You are accused of a crime at ${paramstr}. Respond naturally to the following questions while staying consistent with your alibi.`;
+        context = `This is a RPG game. You are the suspect of a crime at ${paramstr}. Respond naturally to the following questions while staying consistent with your alibi.`;
 
         currentSuspect = new Suspect();
 
@@ -211,7 +206,6 @@ export function start(config) {
         input.placeholder = `Type here to talk to ${questionedPerson}...`;
 
         draw(canvas);
-
 }
 
 // Events
